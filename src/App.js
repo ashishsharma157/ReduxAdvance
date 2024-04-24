@@ -3,8 +3,9 @@ import Cart from './components/Cart/Cart';
 import Layout from './components/Layout/Layout';
 import Products from './components/Shop/Products';
 import { useSelector, useDispatch } from 'react-redux';
-import { uiActions } from './store/ui-slice';
+
 import Notification from './components/UI/Notification';
+import { sendCartData } from './store/cart-slice';
 let isInital=true;
 
 function App() {
@@ -13,30 +14,31 @@ function App() {
   const cart= useSelector((state=>state.cart));
   const notification = useSelector(state=>state.ui.notification);
   useEffect(()=>{
-    const sendCartData=async () =>{
-      dispatch(
-        uiActions.showNotification(
-          {status:'pending', 
-          title:'sending', 
-          message:'sending card data'
-        }));
-    const response= await fetch('https://apitesting-54b32-default-rtdb.firebaseio.com/cart.json',{
-      method:'PUT',body:JSON.stringify(cart),
-    });
+  //   const sendCartData=async () =>{
+  //   //   dispatch(
+  //   //     uiActions.showNotification(
+  //   //       {status:'pending', 
+  //   //       title:'sending', 
+  //   //       message:'sending card data'
+  //   //     }));
+  //   // const response= await fetch('https://apitesting-54b32-default-rtdb.firebaseio.com/cart.json',{
+  //   //   method:'PUT',body:JSON.stringify(cart),
+  //   // });
 
-    if(!response.ok){
-      throw new Error('Sending error data failed');
-    }
-    //const responseData=await response.json();
-    dispatch(uiActions.showNotification({status:'success', title:'Success..', message:'sent card data sucessfully'}))
-  }
-  if(isInital){
-    isInital=false;
-    return;
-  }
-  sendCartData().catch((error)=>{
-    dispatch(uiActions.showNotification({status:'error', title:'Error!', message:'sending card data failed!'}))
-  })
+  //   // if(!response.ok){
+  //   //   throw new Error('Sending error data failed');
+  //   // }
+  //   //const responseData=await response.json();
+  //   // dispatch(uiActions.showNotification({status:'success', title:'Success..', message:'sent card data sucessfully'}))
+  // }
+   if(isInital){
+     isInital=false;
+     return;
+   }
+   dispatch(sendCartData(cart));
+  // sendCartData().catch((error)=>{
+  //   // dispatch(uiActions.showNotification({status:'error', title:'Error!', message:'sending card data failed!'}))
+  // })
   },[cart, dispatch])
   return (
     <Fragment>
